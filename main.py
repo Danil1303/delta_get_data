@@ -1,9 +1,14 @@
-from flask import Flask, request
+import time
+import logging
 import requests
 import threading
-import time
+
 from waitress import serve
+from flask import Flask, request
 from requests.auth import HTTPBasicAuth
+
+# Настройка логирования
+logging.basicConfig(filename='log.txt', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
 app = Flask(__name__)
 
@@ -27,16 +32,19 @@ data = []
 
 def get_data_from_site():
     global data
-    # Отправляем GET-запрос с базовой авторизацией
-    response = requests.get(url, auth=HTTPBasicAuth(username, password), headers={"Content-Type": "application/json"},
-                            allow_redirects=False)
+    try:
+        # Отправляем GET-запрос с базовой авторизацией
+        response = requests.get(url, auth=HTTPBasicAuth(username, password),
+                                headers={"Content-Type": "application/json"},
+                                allow_redirects=False)
 
-    # Проверяем, был ли запрос успешным
-    if response.status_code == 200:
-        data = [i['grz'] for i in response.json()]
-    else:
-        print(f"Ошибка: {response.status_code}")
-    print(data)
+        # Проверяем, был ли запрос успешным
+        if response.status_code == 200:
+            data = [i['grz'] for i in response.json()]
+        else:
+            logging.error(f'Произошла ошибка: {response.status_code}')
+    except Exception as e:
+        logging.error(f'Произошла ошибка: {e}')
 
 
 def periodic_data_update():
