@@ -1,3 +1,4 @@
+import sys
 import time
 import logging
 import requests
@@ -12,19 +13,23 @@ logging.basicConfig(filename='log.txt', level=logging.ERROR, format='%(asctime)s
 
 app = Flask(__name__)
 
-with open('credentials.txt', 'r') as file:
-    # Проходим по строкам файла
-    for line in file:
-        # Убираем лишние пробелы и проверяем каждую строку
-        line = line.strip()
-        # URL API
-        if line.startswith('url='):
-            url = line.split('=')[1]
-        # Логин и пароль для базовой авторизации
-        elif line.startswith('username='):
-            username = line.split('=')[1]
-        elif line.startswith('password='):
-            password = line.split('=')[1]
+try:
+    with open('credentials.txt', 'r') as file:
+        # Проходим по строкам файла
+        for line in file:
+            # Убираем лишние пробелы и проверяем каждую строку
+            line = line.strip()
+            # URL API
+            if line.startswith('url='):
+                url = line.split('=')[1]
+            # Логин и пароль для базовой авторизации
+            elif line.startswith('username='):
+                username = line.split('=')[1]
+            elif line.startswith('password='):
+                password = line.split('=')[1]
+except Exception as e:
+    logging.error(f'Произошла ошибка: {e}')
+    sys.exit()
 
 # Список с данными
 data = []
@@ -45,6 +50,7 @@ def get_data_from_site():
             logging.error(f'Произошла ошибка: {response.status_code}')
     except Exception as e:
         logging.error(f'Произошла ошибка: {e}')
+        sys.exit()
 
 
 def periodic_data_update():
