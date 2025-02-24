@@ -7,11 +7,19 @@ from requests.auth import HTTPBasicAuth
 
 app = Flask(__name__)
 
-# URL API
-url = ''
-# Логин и пароль для базовой авторизации
-username = ''
-password = ''
+with open('credentials.txt', 'r') as file:
+    # Проходим по строкам файла
+    for line in file:
+        # Убираем лишние пробелы и проверяем каждую строку
+        line = line.strip()
+        # URL API
+        if line.startswith('url='):
+            url = line.split('=')[1]
+        # Логин и пароль для базовой авторизации
+        elif line.startswith('username='):
+            username = line.split('=')[1]
+        elif line.startswith('password='):
+            password = line.split('=')[1]
 
 # Список с данными
 data = []
