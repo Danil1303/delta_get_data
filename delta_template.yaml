@@ -1,0 +1,36 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: b9d43828817147f58b37cc138f479640
+      name: 'by d.bogach/Авто'
+  templates:
+    - uuid: 3a5f248fb35042eaaa12d94140e903e0
+      template: auto_status_delta
+      name: 'Статус авто из Дельты'
+      description: 'by d.bogach'
+      groups:
+        - name: 'by d.bogach/Авто'
+      items:
+        - uuid: ab10968b337243539e2720730b372e46
+          name: 'Статус авто'
+          type: HTTP_AGENT
+          key: auto_status
+          history: 1d
+          trends: 30d
+          valuemap:
+            name: 'Статус авто'
+          url: 'http://{$IP}:{$DELTA_PORT}/get_status?number={$AUTO_NUMBER}'
+      macros:
+        - macro: '{$AUTO_NUMBER}'
+        - macro: '{$DELTA_PORT}'
+          value: '5001'
+        - macro: '{$IP}'
+          value: 192.168.45.109
+      valuemaps:
+        - uuid: 86a906a2c99a4ed8a36d23057009e59b
+          name: 'Статус авто'
+          mappings:
+            - value: '0'
+              newvalue: Свободно
+            - value: '1'
+              newvalue: 'Ключи выданы'
